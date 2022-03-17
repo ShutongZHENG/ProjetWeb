@@ -8,7 +8,7 @@ class VueChatRoom implements Observer
  private $positionX;
  private $positionY;
   
- public function __construct(CModel $modele, String $imageFond, int $h, int $w, int $pX, int $pY){
+ public function __construct(CModele $modele, String $imageFond, int $h, int $w, int $pX, int $pY){
     $this->modele = $modele;
     $this->imageFond = $imageFond;
     $this->hight = $h;
