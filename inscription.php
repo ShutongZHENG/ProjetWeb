@@ -2,11 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-    <title>Cartes</title>
+    <title>Inscription</title>
 </head>
 
 <body>
-    <form action="connexion.php" method="POST">
+    <form action="inscriptionValide.php" method="POST">
         <p>
             <label>Identifiant:</label>
         </p>
@@ -20,8 +20,7 @@
             <input type="text" name="password" />
         </p>
         <p>
-            <input type="submit" value="Login" />
-            <a href="inscription.php">CRÉER VOTRE COMPTE</a>
+            <input type="submit" value="Créer" />
         </p>
     </form>
 </body>
