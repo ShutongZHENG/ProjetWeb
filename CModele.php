@@ -2,11 +2,22 @@
 class CModele extends Observable{
 private $cartes;
 private $messages ;
+private $player1 ;
+private $player2 ;
+private $player3 ;
+private $player4 ;
+private $dealer ;
 
-public function __construct(){
-     $this->cartes = array();
-     $this ->init_cartes();
-     $this->messages = array();
+public function __construct(Player $p1,Player $p2,Player $p3,Player $p4,){
+     $this -> cartes = array();
+     $this -> init_cartes();
+     $this -> messages = array();
+     $this -> player1 = $p1;
+     $this -> player2 = $p2;
+     $this -> player3 = $p3;
+     $this -> player4 = $p4;
+     $this -> dealer = new Player('dealer');
+
 
 }
 public function distribuer(){}
