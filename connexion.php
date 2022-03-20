@@ -8,6 +8,7 @@
 <body>
     
 <?php
+    $Player;
 	$username = $_POST['username'];
 	$password = $_POST['password'];
     $data['username'] = $username;
@@ -22,6 +23,7 @@
     }
     if($res){
         header('Location:main.php?username='.$username);
+        
         exit;
     }else{
         echo "<a href='index.php'>Sans succès, retour à la page d'accueil</a> ";

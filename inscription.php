@@ -1,7 +1,8 @@
 <html>
 <html lang="fr">
+
 <head>
-<meta charset="utf-8">
+    <meta charset="utf-8">
     <title>Inscription</title>
 </head>
 
@@ -19,10 +20,20 @@
         <p>
             <input type="text" name="password" />
         </p>
+
         <p>
+            <select name="niveau">
+                <option value="">sélectionner votre niveau</option>
+                <option value="amateur">amateur</option>
+                <option value="moyen">moyen</option>
+                <option value="pro">pro</option>
+            </select>
             <input type="submit" value="Créer" />
         </p>
+
+
     </form>
+
 </body>
 
 </html>

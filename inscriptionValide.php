@@ -10,12 +10,12 @@
 <?php
 	$username = $_POST['username'];
 	$password = $_POST['password'];
-
+    $niveau = $_POST['niveau'];
 	$datajson = array();
     $data = array();
     $data['username'] = $username;
     $data['password'] = $password;
-
+    $data['niveau'] = $niveau;
   
     if(file_exists('compte.json')){
         $file = file_get_contents('compte.json');

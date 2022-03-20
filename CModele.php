@@ -1,22 +1,26 @@
+
 <?php
 class CModele extends Observable{
 private $cartes;
 private $messages ;
-private $player1 ;
-private $player2 ;
-private $player3 ;
-private $player4 ;
+private $players ;
 private $dealer ;
 
-public function __construct(Player $p1,Player $p2,Player $p3,Player $p4,){
+public function __construct(){
      $this -> cartes = array();
      $this -> init_cartes();
      $this -> messages = array();
-     $this -> player1 = $p1;
-     $this -> player2 = $p2;
-     $this -> player3 = $p3;
-     $this -> player4 = $p4;
      $this -> dealer = new Player('dealer');
+}
+public function setPlayer(Player $p){
+array_push($this->players,$p);
+}
+public function deletePlayer(Player $p){
+
+
+    $key = array_search($p, $this->players);
+    if ($key !== false)
+    array_splice($this->players, $key, 1);
 
 
 }
@@ -55,3 +59,6 @@ array_push($this->cartes,$carte1,$carte2,$carte3,$carte4,$carte5);
 
 } 
 ?>
+
+
+
