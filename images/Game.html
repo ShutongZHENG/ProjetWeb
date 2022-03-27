@@ -1,8 +1,7 @@
-<html>
-<html lang="fr">
 
-<head>
-    <meta charset="utf-8">
+<!-- saved from url=(0061)http://localhost:63342/ProjetWeb/game.php?idRoom=1&username=1 -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <title>Game</title>
     <style type="text/css">
 
@@ -13,9 +12,8 @@
 
         #imageCentreFond {
             position: absolute;
-            left: 725px;
-            top: 325px;
-
+            left: 620px;
+            top: 228px;
         }
 
         #buttons {
@@ -40,8 +38,7 @@
             justify-content: center;
             align-items: center;
             grid-column: 100 / 1500;
-            grid-row: 600/800;
-            position: relative;
+            grid-row: 650/800;
 
         }
         #north{
@@ -68,12 +65,12 @@
 
     </style>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="./statics/js/game.js" defer></script>
+    <script src="./Game_files/jquery.min.js"></script>
+    <script type="text/javascript" src="./Game_files/game.js"></script>
     <script type="text/javascript">
         window.onload = function () {
             $.ajax({
-                url: 'addUser.php?idRoom=' +<?php echo $_GET['idRoom'];?> +"&username=" +<?php echo $_GET['username'];?>,
+                url: 'addUser.php?idRoom=' +1 +"&username=" +1,
                 type: "post",
                 async:false,
                 data: {},
@@ -82,7 +79,7 @@
                 }
 
             });
-            var modele = new CModele(<?php echo $_GET['idRoom'];?>,<?= $_GET["username"] ?>);
+            var modele = new CModele(1);
             var vue = new CVue(modele);
             setInterval( ()=>{vue.notifier()},1000);
             console.log("json add");
@@ -94,7 +91,7 @@
             console.log("exit");
 
             $.ajax({
-                url: 'deleUser.php?idRoom=' +<?php echo $_GET['idRoom'];?> +"&username=" +<?php echo $_GET['username'];?>,
+                url: 'deleUser.php?idRoom=' +1 +"&username=" +1,
                 type: "post",
                 async:true,
                 data: {},
@@ -110,25 +107,31 @@
 
 <body>
 <div id="compte">
-    <p> <?= $_GET["username"] ?> <br> dans la chambre <?= $_GET["idRoom"] ?> </p>
+    <p> 1 <br> dans la chambre 1 </p>
 </div>
 
 
 <div id="a">
 
     <div id="imageFond">
-        <div id="imageCentreFond"></div>
-        <div id="buttons"></div>
+        <div id="imageCentreFond">
+
+        <img src="./Game_files/imageCentreFond.png"></div>
+
+        <div id="buttons">
+
+
+        <button>distribuer</button><button>montrer</button></div>
         <div id="players">
-            <div id="north">
-                <div id="chatRoomFond"></div>
-            </div>
-            <div id="west"></div>
+
+
+            <div id="north"><img src="./Game_files/profile.png" style="height: 50%;"></div>
+            <div id="west"><img src="./Game_files/profile.png" style="width: 50%;"></div>
             <div id="east"></div>
-            <div id="south"></div>
+            <div id="south"><img src="./Game_files/profile.png" style="height: 50%;"></div>
 
         </div>
-    </div>
+    <img src="./Game_files/imageFond.png"></div>
 
 
 
@@ -136,6 +139,6 @@
 
 
 
-</body>
 
-</html>
+
+</body></html>

@@ -1,7 +1,7 @@
 <?php
 require_once 'Player.php';
 session_start();
-$_SESSION["player"]=new Player($_GET["username"]);
+$_SESSION["username"]=$_GET["username"];
 
 ?>
 <html>
@@ -29,6 +29,8 @@ $_SESSION["player"]=new Player($_GET["username"]);
 window.onload=function(){
     refreshChambres();
 }
+
+
 
 </script>
 </head>
