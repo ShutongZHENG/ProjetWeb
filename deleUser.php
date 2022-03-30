@@ -45,5 +45,22 @@ switch ($idRoom){
 
 $json_string = json_encode($datajson);
 file_put_contents('room.json', $json_string);
+
+$file = file_get_contents('messages.json');
+$datajson = json_decode($file,true);
+for ($i = 0 ; $i< count($datajson); $i++){
+    if($datajson[$i]["idRoom"] == $idRoom){
+
+        $datajson[$i]["messages"] = array();
+        break;
+
+    }
+}
+
+$json_string = json_encode($datajson);
+file_put_contents('messages.json', $json_string);
+
+
+
 echo "success";
 ?>

@@ -84,7 +84,7 @@
             });
             var modele = new CModele(<?php echo $_GET['idRoom'];?>,<?= $_GET["username"] ?>);
             var vue = new CVue(modele);
-            setInterval( ()=>{vue.notifier()},1000);
+            setInterval( ()=>{vue.notifier()},500);
             console.log("json add");
             // alert("hello world");
         }
@@ -102,6 +102,12 @@
                     console.log(data);
                 }
             });
+
+
+
+
+
+
             return "close web";
         }
     </script>

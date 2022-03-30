@@ -172,6 +172,42 @@ class CModele extends Observable {
             }
         });
         this.#players = Players;
+
+
+        let bool_game = true;
+        $.ajax({
+            url: "room.json",
+            type: "GET",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                switch (idRoom) {
+                    case 0:
+                        for (let value of data.chambre1) {
+                            if (value.gameStatus == "false")
+                                bool_game = false;
+                        }
+                        // console.log(chambres.chambre1.length );
+                        break;
+                    case 1:
+                        for (let value of data.chambre2) {
+                            if (value.gameStatus == "false")
+                                bool_game = false;
+                        }
+                        break;
+                    case 2:
+                        for (let value of data.chambre3) {
+                            if (value.gameStatus == "false")
+                                bool_game = false;
+                        }
+                        break;
+                }
+            }
+        });
+        this.gameStatus = bool_game;
+
+
     }
 
 
@@ -216,7 +252,22 @@ class CModele extends Observable {
     }
 
     envoyerMsg(msg) {
-        this.#messages.push(msg);
+        console.log("start ajax");
+        let idroom = this.idRoom;
+        $.ajax({
+                url: 'envoyerMsg.php',
+                type: "get",
+                dataType: "text",
+                async: false,
+                data: {"message":msg,"idRoom":idroom},
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
+                    console.log("fail");
+                }
+            }
+        );
     }
 
 
@@ -244,12 +295,12 @@ class CModele extends Observable {
 
     }
 
-    getlistCartesByPlayers(){
+    getlistCartesByPlayers() {
 
         let idRoom = this.idRoom;
         let username = this.username;
-        console.log("idRoom: "+idRoom +" username: "+username);
-        console.log("Players: "+this.#players[0].name);
+        console.log("idRoom: " + idRoom + " username: " + username);
+        console.log("Players: " + this.#players[0].name);
         let playerSouth;
         let playerWest;
         let playerNorth;
@@ -276,7 +327,6 @@ class CModele extends Observable {
         playerEast = this.getPlayers()[index];
 
 
-
         // ajax给提取卡牌信息
         $.ajax({
             url: "room.json",
@@ -287,8 +337,8 @@ class CModele extends Observable {
 
                 switch (idRoom) {
                     case 0:
-                        for (let i =0 ; i<4; i++){
-                            switch(data.chambre1[i].name){
+                        for (let i = 0; i < 4; i++) {
+                            switch (data.chambre1[i].name) {
                                 case playerSouth.name:
                                     playerSouth.cartes = data.chambre1[i].cartes;
                                     break;
@@ -303,11 +353,11 @@ class CModele extends Observable {
                                     break;
                             }
                         }
-                        // console.log(chambres.chambre1.length );
+
                         break;
                     case 1:
-                        for (let i =0 ; i<4; i++){
-                            switch(data.chambre2[i].name){
+                        for (let i = 0; i < 4; i++) {
+                            switch (data.chambre2[i].name) {
                                 case playerSouth.name:
                                     playerSouth.cartes = data.chambre2[i].cartes;
                                     break;
@@ -324,8 +374,8 @@ class CModele extends Observable {
                         }
                         break;
                     case 2:
-                        for (let i =0 ; i<4; i++){
-                            switch(data.chambre3[i].name){
+                        for (let i = 0; i < 4; i++) {
+                            switch (data.chambre3[i].name) {
                                 case playerSouth.name:
                                     playerSouth.cartes = data.chambre3[i].cartes;
                                     break;
@@ -346,7 +396,6 @@ class CModele extends Observable {
         });
 
 
-
         let res = [];
         res.push(this.#tansfertCartes(playerSouth.cartes));
         res.push(this.#tansfertCartes(playerWest.cartes));
@@ -356,36 +405,83 @@ class CModele extends Observable {
     }
 
 
-    #tansfertCartes(...listInt){
+    #tansfertCartes(...listInt) {
 
-        listInt.sort(function(i, j){return i - j});
-        console.log("ListInt: ");
-        console.log(listInt);
-        console.log(this.#cartes);
-        console.log("len: " + listInt[0].length);
-        let res =[];
-        for (let i = 0 ; i < listInt[0].length; i++){
-            let col ;
-            let row;
-            if (listInt[0][i]%13 ==0 ){
-                col = 12;
-                row = Math.trunc(listInt[0][i]/13) -1;
+        listInt[0].sort(function (i, j) {
+            return i - j
+        });
 
-            }else{
-                col = listInt[0][i]%13 -1;
-                row = Math.trunc(listInt[0][i]/13);
+
+        let listA = [];
+        let list2 = [];
+        let listK = [];
+        let list3_Q = [];
+        let listJoker = [];
+
+
+        for (let i = 0; i < listInt[0].length; i++) {
+            switch (listInt[0][i] % 13) {
+                case 0:
+                    listK.push(listInt[0][i]);
+                    break;
+                case 1:
+                    if (Math.trunc(listInt[0][i] / 13) == 4)
+                        listJoker.splice(0, 0, listInt[0][i]);
+                    else
+                        listA.push(listInt[0][i]);
+                    break;
+                case 2:
+                    if (Math.trunc(listInt[0][i] / 13) == 4)
+                        listJoker.push(listInt[0][i]);
+                    else
+                        list2.push(listInt[0][i]);
+                    break;
+                default:
+                    let val = listInt[0][i] % 13;
+                    let index = 0;
+                    for (let j = list3_Q.length - 1; j >= 0; j--) {
+                        if (val >= list3_Q[j] % 13) {
+                            index = j + 1;
+                            break;
+                        }
+                    }
+                    list3_Q.splice(index, 0, listInt[0][i]);
+                    break;
+
+
             }
 
-            console.log("row : "+ row+" col : "+col);
+
+        }
+        console.log(list3_Q);
+        listInt[0] = (((list3_Q.concat(listK)).concat(listA)).concat(list2)).concat(listJoker);
+
+        //   console.log("ListInt: ");
+        //   console.log(listInt[0]);
+        //console.log(this.#cartes);
+        /// console.log("len: " + listInt[0].length);
+        let res = [];
+        for (let i = 0; i < listInt[0].length; i++) {
+            let col;
+            let row;
+            if (listInt[0][i] % 13 == 0) {
+                col = 12;
+                row = Math.trunc(listInt[0][i] / 13) - 1;
+
+            } else {
+                col = listInt[0][i] % 13 - 1;
+                row = Math.trunc(listInt[0][i] / 13);
+            }
+
+            //   console.log("row : "+ row+" col : "+col);
             let carte = this.#cartes[row][col];
 
-            res.push(carte );
+            res.push(carte);
 
         }
 
         return res;
     }
-
 
 
 }
@@ -443,6 +539,7 @@ class VueChatRoom extends Observer {
     #modele;
     #positionX;
     #positionY;
+    #listMsg;
 
     constructor(modele) {
         super();
@@ -453,11 +550,12 @@ class VueChatRoom extends Observer {
         this.#width = "400px";
         this.#positionX = "200px";
         this.#positionY = "32px";
+        this.#listMsg = [];
         this.#dessiner();
     }
 
     update() {
-       // this.#dessiner();
+         this.#redessiner();
     }
 
     #dessiner() {
@@ -466,8 +564,7 @@ class VueChatRoom extends Observer {
         idchatRoom.appendChild(div);
         var imgFond = document.createElement("img");
         imgFond.src = this.#imageFond;
-       // console.log("node: "+idchatRoom.nodeType);
-        imgFond.style.zIndex ="1";
+        imgFond.style.zIndex = "1";
         imgFond.style.position = "absolute";
         imgFond.style.left = this.#positionX;
         imgFond.style.bottom = this.#positionY;
@@ -478,26 +575,85 @@ class VueChatRoom extends Observer {
         input.style.left = "202px";
         input.style.width = "396px";
         input.style.bottom = "210px";
+        //
+
+        var textarea = document.createElement("textarea");
+        textarea.id = "textbox";
+        textarea.cols =40;
+        textarea.rows = 10;
+        textarea.readOnly = true;
+        textarea.name= "textbox";
+        textarea.style.zIndex ="3";
+        textarea.style.overflow = "auto";
+        textarea.style.resize = "none";
+        textarea.style.position = "absolute";
+        textarea.style.left = "200px";
+        textarea.style.bottom = "31px";
+        textarea.style.width = "400px";
+        textarea.style.height = "177px";
+        textarea.style.background ="transparent";
+        textarea.style.borderStyle ="none";
+        textarea.value
+        div.appendChild(textarea);
 
         // 绑定 enter 事件
-        input.onkeydown = function (e){
-            if (e.keyCode === 13){
+        let modele = this.#modele;
+        input.onkeydown = function (e) {
+            if (e.keyCode === 13) {
                 console.log("Enter!!!");
                 console.log(input.value);
-                input.value="";
+                if (input.value != "")
+                modele.envoyerMsg(input.value);
+
+              //  textarea.value = textarea.value+"> "+input.value+"\n";
+                input.value = "";
             }
         }
         div.appendChild(input);
 
 
 
+    }
+    #redessiner(){
+       // var context = document.getElementById('textbox');
+        let idRoom = this.#modele.idRoom;
+        let msg ;
+        $.ajax({
+            url: "messages.json",
+            type: "GET",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                    for (let i =0 ; i< data.length; i++){
+                        if(idRoom == data[i]['idRoom']){
+                            msg = data[i]['messages'];
+                            break;
+                        }
 
+                    }
 
+            }
+        });
+
+        if (this.#listMsg.length<msg.length){
+
+            let context ;
+            for (let i = 0; i < msg.length-this.#listMsg.length; i++) {
+               context = $("#textbox").append( "> "+msg[this.#listMsg.length+i] +"\n"  );
+            }
+            this.#listMsg = msg;
+            context.scrollTop(context[0].scrollHeight - context.height());
+
+        }else if (this.#listMsg.length>msg.length) {
+            $("#textbox").empty();
+            this.#listMsg = msg;
         }
+
+
 
     }
 
-
+}
 
 
 class Controleur {
@@ -584,7 +740,6 @@ class VuePlayers extends Observer {
     #dessinerPlayer() {
         let nbPer;
         let idRoom = this.#modele.idRoom;
-        let bool_game = true;
         $.ajax({
             url: "room.json",
             type: "GET",
@@ -595,33 +750,20 @@ class VuePlayers extends Observer {
                 switch (idRoom) {
                     case 0:
                         nbPer = data.chambre1.length;
-                        for (let value of data.chambre1) {
-                            if (value.gameStatus == "false")
-                                bool_game = false;
-                        }
-                        // console.log(chambres.chambre1.length );
                         break;
                     case 1:
                         nbPer = data.chambre2.length;
-                        for (let value of data.chambre2) {
-                            if (value.gameStatus == "false")
-                                bool_game = false;
-                        }
                         break;
                     case 2:
                         nbPer = data.chambre3.length;
-                        for (let value of data.chambre3) {
-                            if (value.gameStatus == "false")
-                                bool_game = false;
-                        }
                         break;
                 }
             }
         });
-        this.#modele.gameStatus = bool_game;
 
         var imageProfile2 = document.createElement("img");
         imageProfile2.src = this.#imageProfile;
+        imageProfile2.id = "profile_south";
         var idImageProfile2 = document.getElementById('south');
         imageProfile2.style.height = "50%";
         idImageProfile2.appendChild(imageProfile2);
@@ -630,6 +772,7 @@ class VuePlayers extends Observer {
 
             var imageProfile3 = document.createElement("img");
             imageProfile3.src = this.#imageProfile;
+            imageProfile3.id = "profile_west";
             var idImageProfile3 = document.getElementById('west');
             imageProfile3.style.width = "50%";
             idImageProfile3.appendChild(imageProfile3);
@@ -639,14 +782,17 @@ class VuePlayers extends Observer {
 
                 var imageProfile = document.createElement("img");
                 imageProfile.src = this.#imageProfile;
+                imageProfile.id = "profile_north";
                 var idImageProfile = document.getElementById('north');
                 imageProfile.style.height = "50%";
                 idImageProfile.appendChild(imageProfile);
+                console.log("TIME2 " + this.#Players.length);
 
                 if (nbPer > 3) {
 
                     var imageProfile4 = document.createElement("img");
                     imageProfile4.src = this.#imageProfile;
+                    imageProfile4.id = "profile_east";
                     var idImageProfile4 = document.getElementById('east');
                     imageProfile4.style.width = "50%";
                     idImageProfile4.appendChild(imageProfile4);
@@ -662,36 +808,86 @@ class VuePlayers extends Observer {
 
     #redessiner() {
 
+        let oldPlayers = this.#modele.getPlayers();
+
         this.#modele.autorefreshPlayers();
         this.#Players = this.#modele.getPlayers();
 
 
+        let del2 = document.getElementById('west');
+        let del3 = document.getElementById('east');
+        let del4 = document.getElementById('north');
         if (this.#Players.length < 4 || !this.#modele.gameStatus) {
+            if (this.#modele.timer == 1) {
+                oldPlayers = this.#modele.getPlayers();
+                var del1 = document.getElementById('south');
+                while (del1.childNodes.length > 0) {
+                    del1.removeChild(del1.childNodes[0]);
+                }
+                while (del2.childNodes.length > 0) {
+                    del2.removeChild(del2.childNodes[0]);
+                }
+                while (del3.childNodes.length > 0) {
+                    del3.removeChild(del3.childNodes[0]);
+                }
+                while (del4.childNodes.length > 0) {
+                    del4.removeChild(del4.childNodes[0]);
+                }
+                this.#dessinerPlayer();
+                console.log("TIME1 " + this.#Players.length);
+            }
             this.#modele.timer = 0;
-            var del1 = document.getElementById('south');
-            var del2 = document.getElementById('west');
-            var del3 = document.getElementById('east');
-            var del4 = document.getElementById('north');
-            while (del1.childNodes.length > 0) {
-                del1.removeChild(del1.childNodes[0]);
+            if (oldPlayers.length > this.#Players.length) {
+                let val = oldPlayers.length - this.#Players.length;
+
+
+                if (document.getElementById('profile_east') && val > 0) {
+                    document.getElementById('profile_east').remove();
+                    val = val - 1;
+                }
+                if (document.getElementById('profile_north') && val > 0) {
+                    document.getElementById('profile_north').remove();
+                    val = val - 1;
+                }
+                if (document.getElementById('profile_west') && val > 0) {
+                    document.getElementById('profile_west').remove();
+                }
+
+            } else {
+                let val = this.#Players.length - oldPlayers.length;
+                if (val > 0 && document.getElementById('profile_west') === null) {
+                    let imageProfile = document.createElement("img");
+                    imageProfile.src = this.#imageProfile;
+                    imageProfile.id = "profile_west";
+                    let idImageProfile = document.getElementById('west');
+                    imageProfile.style.width = "50%";
+                    idImageProfile.appendChild(imageProfile);
+                    val = val - 1;
+                }
+                if (val > 0 && document.getElementById('profile_north') === null) {
+                    let imageProfile = document.createElement("img");
+                    imageProfile.src = this.#imageProfile;
+                    imageProfile.id = "profile_north";
+                    let idImageProfile = document.getElementById('north');
+                    imageProfile.style.height = "50%";
+                    idImageProfile.appendChild(imageProfile);
+                    val = val - 1;
+                }
+                if (document.getElementById('profile_east') === null && val > 0) {
+                    let imageProfile = document.createElement("img");
+                    imageProfile.src = this.#imageProfile;
+                    imageProfile.id = "profile_east";
+                    let idImageProfile = document.getElementById('east');
+                    imageProfile.style.width = "50%";
+                    idImageProfile.appendChild(imageProfile);
+                }
             }
-            while (del2.childNodes.length > 0) {
-                del2.removeChild(del2.childNodes[0]);
-            }
-            while (del3.childNodes.length > 0) {
-                del3.removeChild(del3.childNodes[0]);
-            }
-            while (del4.childNodes.length > 0) {
-                del4.removeChild(del4.childNodes[0]);
-            }
-            this.#dessinerPlayer();
+
 
         } else {
+
             if (this.#modele.timer == 0) {
                 var del1 = document.getElementById('south');
-                var del2 = document.getElementById('west');
-                var del3 = document.getElementById('east');
-                var del4 = document.getElementById('north');
                 while (del1.childNodes.length > 0) {
                     del1.removeChild(del1.childNodes[0]);
                 }
@@ -722,85 +918,99 @@ class VuePlayers extends Observer {
 
     #showInitCartes() {
         //0 -> south 1-> west 2->north 3->east
-       let cartes = this.#modele.getlistCartesByPlayers();
-       console.log("ShowInitCarte: ");
-       console.log(cartes);
+        let cartes = this.#modele.getlistCartesByPlayers();
+        console.log("ShowInitCarte: ");
+        console.log(cartes);
         let idSouth = document.getElementById('south');
-       // let div = document.createElement("div");
-       // idSouth.appendChild(div);
-       for (let i =0 ; i< cartes[0].length;i++){
+        // let div = document.createElement("div");
+        // idSouth.appendChild(div);
+        for (let i = 0; i < cartes[0].length; i++) {
 
 
             let divSouth = document.createElement("img");
-            divSouth.src = ""+cartes[0][i].image;
-            divSouth.style.zIndex =""+(i+1);
+            divSouth.src = "" + cartes[0][i].image;
+            divSouth.style.zIndex = "" + (i + 1);
             divSouth.style.position = "absolute";
-            divSouth.style.left = (800 - (100+25*(cartes[0].length-1))/2+25*i)+"px";
+            divSouth.style.left = (800 - (100 + 25 * (cartes[0].length - 1)) / 2 + 25 * i) + "px";
             //divSouth.style.top = "10px";
             divSouth.style.height = "75%";
             divSouth.style.bottom = "0px";
-            divSouth.onclick = function (){
-               if(divSouth.style.bottom == "0px"){
-                   divSouth.style.bottom = "25px";
-               }else {
-                   divSouth.style.bottom = "0px";
-               }
+            divSouth.onclick = function () {
+                if (divSouth.style.bottom == "0px") {
+                    divSouth.style.bottom = "25px";
+                } else {
+                    divSouth.style.bottom = "0px";
+                }
             };
-           //div.appendChild(divSouth);
-           idSouth.appendChild(divSouth);
+            //div.appendChild(divSouth);
+            idSouth.appendChild(divSouth);
 
-       }
+        }
 
 
-       //西面
+        //西面
         let idWest = document.getElementById('west');
-          for (let j = 0 ; j<cartes[1].length; j++){
-               let divWest = document.createElement("img");
-               divWest.src = ""+cartes[1][j].imagefond;
-               divWest.style.zIndex =""+(j+1);
-               divWest.style.position = "absolute";
-               divWest.style.left = "20px";
-               divWest.style.top = (100+40*j)+"px";
-               divWest.style.height = "24.45%";
-               idWest.appendChild(divWest);
+        for (let j = 0; j < cartes[1].length; j++) {
+            let divWest = document.createElement("img");
+            divWest.src = "" + cartes[1][j].imagefond;
+            divWest.style.zIndex = "" + (j + 1);
+            divWest.style.position = "absolute";
+            divWest.style.left = "20px";
+            divWest.style.top = (100 + 40 * j) + "px";
+            divWest.style.height = "24.45%";
+            idWest.appendChild(divWest);
 
-           }
+        }
 
         let idNorth = document.getElementById('north');
-        for (let j = 0 ; j<cartes[2].length; j++){
+        for (let j = 0; j < cartes[2].length; j++) {
             let divNorth = document.createElement("img");
-            divNorth.src = ""+cartes[2][j].imagefond;
-            divNorth.style.zIndex =""+(j+1);
+            divNorth.src = "" + cartes[2][j].imagefond;
+            divNorth.style.zIndex = "" + (j + 1);
             divNorth.style.position = "absolute";
             divNorth.style.height = "24.45%";
-            divNorth.style.left = (800 - (100+25*(cartes[0].length-1))/2+25*j)+"px";
+            divNorth.style.left = (800 - (100 + 25 * (cartes[0].length - 1)) / 2 + 25 * j) + "px";
             divNorth.style.top = "0px";
             idNorth.appendChild(divNorth);
 
         }
 
         let idEast = document.getElementById('east');
-        for (let j = 0 ; j<cartes[3].length; j++){
+        for (let j = 0; j < cartes[3].length; j++) {
             let divEast = document.createElement("img");
-            divEast.src = ""+cartes[3][j].imagefond;
-            divEast.style.zIndex =""+(j+1);
+            divEast.src = "" + cartes[3][j].imagefond;
+            divEast.style.zIndex = "" + (j + 1);
             divEast.style.position = "absolute";
             divEast.style.right = "20px";
-            divEast.style.top = (100+40*j)+"px";
+            divEast.style.top = (100 + 40 * j) + "px";
             divEast.style.height = "24.45%";
             idEast.appendChild(divEast);
 
         }
 
 
+    }
+}
 
-
-
-
-
-
+class VueTabAffichage extends Observer{
+    #modele
+    constructor(modele) {
+        super();
+        this.#modele = modele;
+        this.#dessiner();
+        this.#modele.ajouteObserver(this);
 
     }
+    update() {
+        this.#redessiner();
+    }
+    #dessiner(){
+
+    }
+    #redessiner(){
+
+    }
+
 }
 
 
