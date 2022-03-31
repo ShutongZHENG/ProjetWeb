@@ -14,6 +14,8 @@ switch ($idRoom){
         for($i=0; $i< count( $datajson["chambre1"] );$i++){
             $datajson["chambre1"][$i]["gameStatus"] = "false";
             $datajson["chambre1"][$i]["cartes"] = [];
+            $datajson["chambre1"][$i]["order"] = "";
+            $datajson["chambre1"][$i]["cartesCentre"] = [];
         }
 
         break;
@@ -26,6 +28,8 @@ switch ($idRoom){
         for($i=0; $i< count( $datajson["chambre2"] );$i++){
             $datajson["chambre2"][$i]["gameStatus"] = "false";
             $datajson["chambre2"][$i]["cartes"] = [];
+            $datajson["chambre2"][$i]["order"] = "";
+            $datajson["chambre2"][$i]["cartesCentre"] = [];
         }
 
         break;
@@ -38,6 +42,8 @@ switch ($idRoom){
         for($i=0; $i< count( $datajson["chambre3"] );$i++){
             $datajson["chambre3"][$i]["gameStatus"] = "false";
             $datajson["chambre3"][$i]["cartes"] = [];
+            $datajson["chambre3"][$i]["order"] = "";
+            $datajson["chambre3"][$i]["cartesCentre"] = [];
         }
         break;
 }

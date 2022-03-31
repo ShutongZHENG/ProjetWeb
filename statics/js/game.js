@@ -113,6 +113,8 @@ class CModele extends Observable {
     gameStatus;
     timer;
     username;
+    order;
+
 
 
     constructor(idRoom, username) {
@@ -128,6 +130,7 @@ class CModele extends Observable {
         this.gameStatus = false;
         this.username = username;
         console.log("hello " + this.idRoom);
+        this.order = 0;
 
 
     }
@@ -208,6 +211,30 @@ class CModele extends Observable {
         this.gameStatus = bool_game;
 
 
+        let order;
+        $.ajax({
+            url: "room.json",
+            type: "GET",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                switch (idRoom) {
+                    case 0:
+                        order = data.chambre1[0]['order'];
+                        // console.log(chambres.chambre1.length );
+                        break;
+                    case 1:
+                        order = data.chambre2[0]['order'];
+                        break;
+                    case 2:
+                        order = data.chambre3[0]['order'];
+                        break;
+                }
+            }
+        });
+        this.order = order;
+
     }
 
 
@@ -217,7 +244,7 @@ class CModele extends Observable {
 
 
     distribuer() {
-        if (!this.gameStatus) {
+        if (!this.gameStatus && this.#players.length == 4) {
             let cartesPlayer = [[], [], [], []];
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 7; j++) {
@@ -245,9 +272,24 @@ class CModele extends Observable {
     }
 
     montrer() {
+         //
+        if (this.gameStatus && this.#players.length == 4  ) {
+//&& this.#players[this.order].name == this.username
+                    let idSouth = document.getElementById("south");
+                    let listSouth = idSouth.children;
+                    console.log(listSouth[0].style.bottom);
+
+
+        }
     }
 
     gagner() {
+        // gagner 紧接 montrer后直接运行
+        // room.json zhong user有一个 数据是 分数；
+        // 运行前提是 gameStatus 状态为 true
+        // 1。 当用户退出后 分数归0
+        //2。 用户分别出完 得分是 10， 5，2，0
+        // 10分当判断json 别的用户手里都有牌的情况下 为10 有一个人是空为5 有2个人是 2 场上3个人都无牌自动判别为空
         return false;
     }
 
@@ -281,16 +323,16 @@ class CModele extends Observable {
             carte1[i] = new Carte(Symbol.Carraux, "CartesAJouer/carte_Carraux_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 1), Couleur.Rouge, 0, 0, false);
 
         for (let i = 0; i < 13; i++)
-            carte2[i] = new Carte(Symbol.Coeurs, "CartesAJouer/carte_Coeurs_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 1), Couleur.Rouge, 0, 0, false);
+            carte2[i] = new Carte(Symbol.Coeurs, "CartesAJouer/carte_Coeurs_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 14), Couleur.Rouge, 0, 0, false);
 
         for (let i = 0; i < 13; i++)
-            carte3[i] = new Carte(Symbol.Piques, "CartesAJouer/carte_Piques_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 1), Couleur.Noir, 0, 0, false);
+            carte3[i] = new Carte(Symbol.Piques, "CartesAJouer/carte_Piques_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 27), Couleur.Noir, 0, 0, false);
 
         for (let i = 0; i < 13; i++)
-            carte4[i] = new Carte(Symbol.Trefles, "CartesAJouer/carte_Trefles_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 1), Couleur.Noir, 0, 0, false);
+            carte4[i] = new Carte(Symbol.Trefles, "CartesAJouer/carte_Trefles_" + (i + 1) + ".png", "CartesAJouer/carte_Autres_3.png", (i + 40), Couleur.Noir, 0, 0, false);
 
-        carte5[0] = new Carte(Symbol.Joker, "CartesAJouer/carte_Autres_1.png", "CartesAJouer/carte_Autres_3.png", 1, Couleur.Noir, 0, 0, false);
-        carte5[1] = new Carte(Symbol.Joker, "CartesAJouer/carte_Autres_2.png", "CartesAJouer/carte_Autres_3.png", 1, Couleur.Rouge, 0, 0, false);
+        carte5[0] = new Carte(Symbol.Joker, "CartesAJouer/carte_Autres_1.png", "CartesAJouer/carte_Autres_3.png", 53, Couleur.Noir, 0, 0, false);
+        carte5[1] = new Carte(Symbol.Joker, "CartesAJouer/carte_Autres_2.png", "CartesAJouer/carte_Autres_3.png", 54, Couleur.Rouge, 0, 0, false);
         this.#cartes.push(carte1, carte2, carte3, carte4, carte5);
 
     }
@@ -666,10 +708,12 @@ class Controleur {
     }
 
     distribuer() {
+        //当gamestatus 为false 才能运行
         this.modele.distribuer();
     }
 
     montrer() {
+        //运行前提是 gameStatus 状态为 true
         console.log("montrer");
     }
 
@@ -694,6 +738,8 @@ class VueCommandes {
         var idBtnd = document.getElementById("buttons");
         this.#bt_distribuer.innerHTML = 'distribuer';
         this.#bt_distribuer.onclick = function () {
+            //当gamestatus 为false 才能运行
+
             modele.distribuer();
         }
 
@@ -702,7 +748,10 @@ class VueCommandes {
         this.#bt_montrer = document.createElement("button");
         var idBtnm = document.getElementById("buttons");
         this.#bt_montrer.innerHTML = 'montrer';
-        this.#bt_montrer.addEventListener("click", this.#modele.montrer);
+        this.#bt_montrer.onclick = function (){
+            modele.montrer();
+        }
+           // .addEventListener("click", this.#modele.montrer);
 
         idBtnd.appendChild(this.#bt_distribuer);
         idBtnm.appendChild(this.#bt_montrer);
@@ -922,13 +971,58 @@ class VuePlayers extends Observer {
         console.log("ShowInitCarte: ");
         console.log(cartes);
         let idSouth = document.getElementById('south');
+        let idWest = document.getElementById('west');
+        let idNorth = document.getElementById('north');
+        let idEast = document.getElementById('east');
+
+
+
         // let div = document.createElement("div");
         // idSouth.appendChild(div);
+        // 找南的位置是players的几
+        let index;
+        for (let i =0 ; i< this.#modele.getPlayers().length;i++){
+            console.log(this.#modele.getPlayers()[i].name);
+            if (this.#modele.getPlayers()[i].name == this.#modele.username){
+                index = i;
+               // break;
+            }
+        }
+        let listPosition = [];
+        for (let i =0 ; i<4;i++){
+            if (index == 4)
+                index = 0;
+            listPosition.push(index);
+            index= index+1;
+
+        }
+//
+        switch (this.#modele.order){
+            case listPosition[0]:
+                //南部 增加一个标志
+                break;
+            case listPosition[1]:
+                //西部
+                break;
+            case listPosition[2]:
+                //北部
+                break;
+            case  listPosition[3] :
+                //东
+                break;
+
+        }
+
+
+
+
+
         for (let i = 0; i < cartes[0].length; i++) {
 
 
             let divSouth = document.createElement("img");
             divSouth.src = "" + cartes[0][i].image;
+            divSouth.alt = ""+cartes[0][i].valuer;
             divSouth.style.zIndex = "" + (i + 1);
             divSouth.style.position = "absolute";
             divSouth.style.left = (800 - (100 + 25 * (cartes[0].length - 1)) / 2 + 25 * i) + "px";
@@ -949,7 +1043,7 @@ class VuePlayers extends Observer {
 
 
         //西面
-        let idWest = document.getElementById('west');
+
         for (let j = 0; j < cartes[1].length; j++) {
             let divWest = document.createElement("img");
             divWest.src = "" + cartes[1][j].imagefond;
@@ -962,7 +1056,8 @@ class VuePlayers extends Observer {
 
         }
 
-        let idNorth = document.getElementById('north');
+
+
         for (let j = 0; j < cartes[2].length; j++) {
             let divNorth = document.createElement("img");
             divNorth.src = "" + cartes[2][j].imagefond;
@@ -975,7 +1070,7 @@ class VuePlayers extends Observer {
 
         }
 
-        let idEast = document.getElementById('east');
+
         for (let j = 0; j < cartes[3].length; j++) {
             let divEast = document.createElement("img");
             divEast.src = "" + cartes[3][j].imagefond;

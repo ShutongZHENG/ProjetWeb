@@ -8,7 +8,6 @@
 <body>
     
 <?php
-    $Player;
 	$username = $_POST['username'];
 	$password = $_POST['password'];
     $data['username'] = $username;

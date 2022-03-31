@@ -7,6 +7,8 @@ $data['name'] = $username;
 $data['nRoom'] = $idRoom;
 $data['gameStatus'] = 'false';
 $data['cartes'] = array();
+$data['order'] = 0;
+$data['cartesCentre'] = array();
 
 
 if (file_exists('room.json')) {
@@ -15,16 +17,25 @@ if (file_exists('room.json')) {
     switch ($idRoom) {
         case 0:
             $usernameList = array_column($datajson["chambre1"], 'name');
+            for ($i=0 ; $i < count($datajson["chambre1"]);$i++)
+                $datajson["chambre1"][$i]["order"] = 0;
+
             if (in_array($username, $usernameList) == false)
                 array_push($datajson["chambre1"], $data);
             break;
         case 1:
             $usernameList = array_column($datajson["chambre2"], 'name');
+            for ($i=0 ; $i < count($datajson["chambre2"]);$i++)
+                $datajson["chambre2"][$i]["order"] = 0;
+
             if (in_array($username, $usernameList) == false)
                 array_push($datajson["chambre2"], $data);
             break;
         case 2:
             $usernameList = array_column($datajson["chambre3"], 'name');
+            for ($i=0 ; $i < count($datajson["chambre3"]);$i++)
+                $datajson["chambre3"][$i]["order"] = 0;
+
             if (in_array($username, $usernameList) == false)
                 array_push($datajson["chambre3"], $data);
             break;
