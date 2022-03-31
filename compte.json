@@ -1,17 +1,1 @@
-[
-  {
-    "username": "123",
-    "password": "123",
-    "niveau": "amateur"
-  },
-  {
-    "username": "1",
-    "password": "1",
-    "niveau": "amateur"
-  },
-  {
-    "username": "12",
-    "password": "12",
-    "niveau": "moyen"
-  }
-]
+[{"username":"123","password":"123","niveau":"amateur"},{"username":"1","password":"1","niveau":"amateur"},{"username":"12","password":"12","niveau":"moyen"},{"username":"abc","password":"","niveau":"amateur"}]

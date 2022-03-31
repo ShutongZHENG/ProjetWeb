@@ -114,7 +114,7 @@ class CModele extends Observable {
     timer;
     username;
     order;
-
+    centreCartes;
 
 
     constructor(idRoom, username) {
@@ -131,7 +131,7 @@ class CModele extends Observable {
         this.username = username;
         console.log("hello " + this.idRoom);
         this.order = 0;
-
+        this.centreCartes = new Array();
 
     }
 
@@ -211,6 +211,7 @@ class CModele extends Observable {
         this.gameStatus = bool_game;
 
 
+        let centreCartes;
         let order;
         $.ajax({
             url: "room.json",
@@ -222,18 +223,22 @@ class CModele extends Observable {
                 switch (idRoom) {
                     case 0:
                         order = data.chambre1[0]['order'];
+                        centreCartes = data.chambre1[0]['cartesCentre'];
                         // console.log(chambres.chambre1.length );
                         break;
                     case 1:
                         order = data.chambre2[0]['order'];
+                        centreCartes = data.chambre2[0]['cartesCentre'];
                         break;
                     case 2:
                         order = data.chambre3[0]['order'];
+                        centreCartes = data.chambre3[0]['cartesCentre'];
                         break;
                 }
             }
         });
         this.order = order;
+        this.centreCartes = centreCartes;
 
     }
 
@@ -272,12 +277,117 @@ class CModele extends Observable {
     }
 
     montrer() {
-         //
-        if (this.gameStatus && this.#players.length == 4  ) {
-//&& this.#players[this.order].name == this.username
-                    let idSouth = document.getElementById("south");
-                    let listSouth = idSouth.children;
-                    console.log(listSouth[0].style.bottom);
+        //
+        if (this.gameStatus && this.#players.length == 4 && this.#players[this.order].name == this.username) {
+
+            let idSouth = document.getElementById("south");
+            let listSouth = idSouth.children;
+          //  console.log(listSouth[0].style.bottom);
+            let listMontrer=[];
+            for(let i =0 ; i<listSouth.length;i++){
+                if (listSouth[i].style.bottom == "25px"){
+                    listMontrer.push(listSouth[i].alt);
+                }
+            }
+            let data = encodeURI(JSON.stringify(listMontrer));
+            console.log("WHAT IS THE DATA:")
+            console.log(data);
+
+            let urllink = "idRoom=" + this.idRoom + "&listMontrer=" + data+"&username="+this.username;
+            $.get("montrer.php", urllink, function (data) {
+                console.log("THIS IS: ");
+                console.log(data);
+            });
+
+
+
+
+
+// 需要在 Vueplayer要 调用同类 函数
+            let index;
+            for (let i = 0; i < this.#players.length; i++) {
+                console.log(this.#players[i].name);
+                if (this.#players[i].name == this.username) {
+                    index = i;
+                    // break;
+                }
+            }
+            let listPosition = [];
+            for (let i = 0; i < 4; i++) {
+                if (index == 4)
+                    index = 0;
+                listPosition.push(index);
+                index = index + 1;
+
+            }
+//
+            let indexMark;
+            let idWest = document.getElementById('west');
+            let idNorth = document.getElementById('north');
+            let idEast = document.getElementById('east');
+            let idMark = document.getElementById("idMark");
+            console.log(idMark);
+            idMark.remove();
+            if (this.order == 3) {
+                this.order = 0;
+            } else {
+                this.order = this.order + 1;
+            }
+            switch (this.order) {
+                case listPosition[0]:
+                    //南部 增加一个标志
+                    indexMark = document.createElement("img");
+                    indexMark.src = "./images/mark_sud.png";
+                    indexMark.id = "idMark";
+                    indexMark.style.zIndex = "10";
+                    indexMark.style.position = "absolute";
+                    indexMark.style.height = "32%";
+                    indexMark.style.left = "775px";
+                    indexMark.style.bottom = "170px";
+
+                    idSouth.appendChild(indexMark);
+                    break;
+                case listPosition[1]:
+                    //西部
+                    indexMark = document.createElement("img");
+                    indexMark.src = "./images/mark_west.png";
+                    indexMark.id = "idMark";
+                    indexMark.style.zIndex = "10";
+                    indexMark.style.position = "absolute";
+                    indexMark.style.height = "8.00%";
+                    indexMark.style.left = "130px";
+                    indexMark.style.top = "250px";
+                    idWest.appendChild(indexMark);
+
+                    break;
+                case listPosition[2]:
+                    //北部
+                    indexMark = document.createElement("img");
+                    indexMark.src = "./images/mark_north.png";
+                    indexMark.id = "idMark";
+                    indexMark.style.zIndex = "10";
+                    indexMark.style.position = "absolute";
+                    indexMark.style.height = "10.45%";
+                    indexMark.style.left = "775px";
+                    indexMark.style.top = "160px";
+
+                    idNorth.appendChild(indexMark);
+                    break;
+                case  listPosition[3] :
+                    //东
+                    indexMark = document.createElement("img");
+                    indexMark.src = "./images/mark_east.png";
+                    indexMark.id = "idMark";
+                    indexMark.style.zIndex = "10";
+                    indexMark.style.position = "absolute";
+                    indexMark.style.height = "8.00%";
+                    indexMark.style.right = "130px";
+                    indexMark.style.top = "250px";
+
+                    idEast.appendChild(indexMark);
+                    break;
+
+            }
 
 
         }
@@ -301,7 +411,7 @@ class CModele extends Observable {
                 type: "get",
                 dataType: "text",
                 async: false,
-                data: {"message":msg,"idRoom":idroom},
+                data: {"message": msg, "idRoom": idroom},
                 success: function (data) {
                     console.log(data);
                 },
@@ -525,6 +635,10 @@ class CModele extends Observable {
         return res;
     }
 
+    getCartes(){
+        return this.#cartes;
+    }
+
 
 }
 
@@ -563,6 +677,9 @@ class VueFond extends Observer {
 
         var imageCentreFond = document.createElement("img");
         imageCentreFond.src = this.#imageCentreFond;
+        imageCentreFond.style.position = "absolute";
+        imageCentreFond.style.zIndex = "2";
+
 
         var idImageCentreFond = document.getElementById('imageCentreFond');
 
@@ -597,7 +714,7 @@ class VueChatRoom extends Observer {
     }
 
     update() {
-         this.#redessiner();
+        this.#redessiner();
     }
 
     #dessiner() {
@@ -621,11 +738,11 @@ class VueChatRoom extends Observer {
 
         var textarea = document.createElement("textarea");
         textarea.id = "textbox";
-        textarea.cols =40;
+        textarea.cols = 40;
         textarea.rows = 10;
         textarea.readOnly = true;
-        textarea.name= "textbox";
-        textarea.style.zIndex ="3";
+        textarea.name = "textbox";
+        textarea.style.zIndex = "3";
         textarea.style.overflow = "auto";
         textarea.style.resize = "none";
         textarea.style.position = "absolute";
@@ -633,8 +750,8 @@ class VueChatRoom extends Observer {
         textarea.style.bottom = "31px";
         textarea.style.width = "400px";
         textarea.style.height = "177px";
-        textarea.style.background ="transparent";
-        textarea.style.borderStyle ="none";
+        textarea.style.background = "transparent";
+        textarea.style.borderStyle = "none";
         textarea.value
         div.appendChild(textarea);
 
@@ -645,52 +762,51 @@ class VueChatRoom extends Observer {
                 console.log("Enter!!!");
                 console.log(input.value);
                 if (input.value != "")
-                modele.envoyerMsg(input.value);
+                    modele.envoyerMsg(input.value);
 
-              //  textarea.value = textarea.value+"> "+input.value+"\n";
+                //  textarea.value = textarea.value+"> "+input.value+"\n";
                 input.value = "";
             }
         }
         div.appendChild(input);
 
 
-
     }
-    #redessiner(){
-       // var context = document.getElementById('textbox');
+
+    #redessiner() {
+        // var context = document.getElementById('textbox');
         let idRoom = this.#modele.idRoom;
-        let msg ;
+        let msg;
         $.ajax({
             url: "messages.json",
             type: "GET",
             dataType: "json",
             async: false,
             success: function (data) {
-                    for (let i =0 ; i< data.length; i++){
-                        if(idRoom == data[i]['idRoom']){
-                            msg = data[i]['messages'];
-                            break;
-                        }
-
+                for (let i = 0; i < data.length; i++) {
+                    if (idRoom == data[i]['idRoom']) {
+                        msg = data[i]['messages'];
+                        break;
                     }
+
+                }
 
             }
         });
 
-        if (this.#listMsg.length<msg.length){
+        if (this.#listMsg.length < msg.length) {
 
-            let context ;
-            for (let i = 0; i < msg.length-this.#listMsg.length; i++) {
-               context = $("#textbox").append( "> "+msg[this.#listMsg.length+i] +"\n"  );
+            let context;
+            for (let i = 0; i < msg.length - this.#listMsg.length; i++) {
+                context = $("#textbox").append("> " + msg[this.#listMsg.length + i] + "\n");
             }
             this.#listMsg = msg;
             context.scrollTop(context[0].scrollHeight - context.height());
 
-        }else if (this.#listMsg.length>msg.length) {
+        } else if (this.#listMsg.length > msg.length) {
             $("#textbox").empty();
             this.#listMsg = msg;
         }
-
 
 
     }
@@ -748,10 +864,10 @@ class VueCommandes {
         this.#bt_montrer = document.createElement("button");
         var idBtnm = document.getElementById("buttons");
         this.#bt_montrer.innerHTML = 'montrer';
-        this.#bt_montrer.onclick = function (){
+        this.#bt_montrer.onclick = function () {
             modele.montrer();
         }
-           // .addEventListener("click", this.#modele.montrer);
+        // .addEventListener("click", this.#modele.montrer);
 
         idBtnd.appendChild(this.#bt_distribuer);
         idBtnm.appendChild(this.#bt_montrer);
@@ -763,9 +879,10 @@ class VueCommandes {
 
 
 class VuePlayers extends Observer {
-    #Players
-    #modele
+    #Players;
+    #modele;
     #imageProfile;
+    #order;
 
     constructor(modele) {
         super();
@@ -774,6 +891,7 @@ class VuePlayers extends Observer {
         this.#imageProfile = './images/profile.png'
         this.#dessiner();
         this.#modele.ajouteObserver(this);
+        this.#order  =0;
 
     }
 
@@ -862,14 +980,13 @@ class VuePlayers extends Observer {
         this.#modele.autorefreshPlayers();
         this.#Players = this.#modele.getPlayers();
 
-
+        let del1 = document.getElementById('south');
         let del2 = document.getElementById('west');
         let del3 = document.getElementById('east');
         let del4 = document.getElementById('north');
         if (this.#Players.length < 4 || !this.#modele.gameStatus) {
             if (this.#modele.timer == 1) {
                 oldPlayers = this.#modele.getPlayers();
-                var del1 = document.getElementById('south');
                 while (del1.childNodes.length > 0) {
                     del1.removeChild(del1.childNodes[0]);
                 }
@@ -936,7 +1053,7 @@ class VuePlayers extends Observer {
         } else {
 
             if (this.#modele.timer == 0) {
-                var del1 = document.getElementById('south');
+
                 while (del1.childNodes.length > 0) {
                     del1.removeChild(del1.childNodes[0]);
                 }
@@ -952,8 +1069,81 @@ class VuePlayers extends Observer {
                 this.#showInitCartes();
                 this.#modele.timer += 1;
             } else {
+                let nouvelOrder = this.#modele.order;
+                if (this.#order != nouvelOrder){
+                    this.#order = nouvelOrder;
+
+                    while (del1.childNodes.length > 0) {
+                        del1.removeChild(del1.childNodes[0]);
+                    }
+                    while (del2.childNodes.length > 0) {
+                        del2.removeChild(del2.childNodes[0]);
+                    }
+                    while (del3.childNodes.length > 0) {
+                        del3.removeChild(del3.childNodes[0]);
+                    }
+                    while (del4.childNodes.length > 0) {
+                        del4.removeChild(del4.childNodes[0]);
+                    }
+
+                    this.#showInitCartes();
+
+                    if(document.getElementById("centreFondCartes"))
+                        document.getElementById("centreFondCartes").remove();
+
+                    let centreFondCartes  = document.createElement("div");
+                    centreFondCartes.id = "centreFondCartes";
+                    centreFondCartes.style.position = "absolute";
+                    centreFondCartes.style.zIndex = "3";
+
+                    let centreCartes = new Array();
+                    for (let i = 0; i < this.#modele.centreCartes.length; i++) {
+                        let col;
+                        let row;
+                        if (this.#modele.centreCartes[i] % 13 == 0) {
+                            col = 12;
+                            row = Math.trunc(this.#modele.centreCartes[i] / 13) - 1;
+
+                        } else {
+                            col = this.#modele.centreCartes[i] % 13 - 1;
+                            row = Math.trunc(this.#modele.centreCartes[i]  / 13);
+                        }
+
+                        //   console.log("row : "+ row+" col : "+col);
+                        let carte = this.#modele.getCartes()[row][col];
+
+                        centreCartes.push(carte);
+
+                    }
+
+                    for (let i =0; i<centreCartes.length; i++ ){
+                            let imgCarte = document.createElement("img");
+                            imgCarte.src = ""+centreCartes[i].image;
+                            imgCarte.alt = ""+centreCartes[i].valuer;
+                            imgCarte.style.zIndex = "auto";
+                        imgCarte.style.position = "absolute";
+                        imgCarte.style.left = (10+25*i )+"px";
+                        imgCarte.style.top = (35-10*i )+"px";
+                        imgCarte.style.height = "150px";
+                        centreFondCartes.appendChild(imgCarte);
+
+                    }
+
+
+                    document.getElementById("imageCentreFond").appendChild(centreFondCartes);
+
+
+
+
+
+
+
+                }
                 //删除 除自己手牌外的所有卡牌
-                console.log("update ");
+                //如果order 改变则 进行手牌 和 标志 以及 中心区域的更新
+                //
+                //
+               // console.log("update ");
             }
         }
 
@@ -976,45 +1166,83 @@ class VuePlayers extends Observer {
         let idEast = document.getElementById('east');
 
 
-
         // let div = document.createElement("div");
         // idSouth.appendChild(div);
         // 找南的位置是players的几
         let index;
-        for (let i =0 ; i< this.#modele.getPlayers().length;i++){
+        for (let i = 0; i < this.#modele.getPlayers().length; i++) {
             console.log(this.#modele.getPlayers()[i].name);
-            if (this.#modele.getPlayers()[i].name == this.#modele.username){
+            if (this.#modele.getPlayers()[i].name == this.#modele.username) {
                 index = i;
-               // break;
+                // break;
             }
         }
         let listPosition = [];
-        for (let i =0 ; i<4;i++){
+        for (let i = 0; i < 4; i++) {
             if (index == 4)
                 index = 0;
             listPosition.push(index);
-            index= index+1;
+            index = index + 1;
 
         }
 //
-        switch (this.#modele.order){
+        let indexMark;
+        switch (this.#modele.order) {
             case listPosition[0]:
                 //南部 增加一个标志
+                indexMark = document.createElement("img");
+                indexMark.src = "./images/mark_sud.png";
+                indexMark.id = "idMark";
+                indexMark.style.zIndex = "10";
+                indexMark.style.position = "absolute";
+                indexMark.style.height = "32%";
+                indexMark.style.left = "775px";
+                indexMark.style.bottom = "170px";
+                idSouth.appendChild(indexMark);
                 break;
             case listPosition[1]:
                 //西部
+                indexMark = document.createElement("img");
+                indexMark.src = "./images/mark_west.png";
+                indexMark.id = "idMark";
+                indexMark.style.zIndex = "10";
+                indexMark.style.position = "absolute";
+                indexMark.style.height = "8.00%";
+                indexMark.style.left = "130px";
+                indexMark.style.top = "250px";
+
+                idWest.appendChild(indexMark);
+
                 break;
             case listPosition[2]:
                 //北部
+                indexMark = document.createElement("img");
+                indexMark.src = "./images/mark_north.png";
+                indexMark.id = "idMark";
+                indexMark.style.zIndex = "10";
+                indexMark.style.position = "absolute";
+                indexMark.style.height = "10.45%";
+                indexMark.style.left = "775px";
+                indexMark.style.top = "160px";
+
+                idNorth.appendChild(indexMark);
                 break;
             case  listPosition[3] :
                 //东
+                indexMark = document.createElement("img");
+                indexMark.src = "./images/mark_east.png";
+                indexMark.id = "idMark";
+                indexMark.style.zIndex = "10";
+                indexMark.style.position = "absolute";
+                indexMark.style.height = "8.00%";
+                indexMark.style.right = "130px";
+                indexMark.style.top = "250px";
+
+
+                idEast.appendChild(indexMark);
                 break;
 
         }
-
-
-
 
 
         for (let i = 0; i < cartes[0].length; i++) {
@@ -1022,7 +1250,7 @@ class VuePlayers extends Observer {
 
             let divSouth = document.createElement("img");
             divSouth.src = "" + cartes[0][i].image;
-            divSouth.alt = ""+cartes[0][i].valuer;
+            divSouth.alt = "" + cartes[0][i].valuer;
             divSouth.style.zIndex = "" + (i + 1);
             divSouth.style.position = "absolute";
             divSouth.style.left = (800 - (100 + 25 * (cartes[0].length - 1)) / 2 + 25 * i) + "px";
@@ -1057,7 +1285,6 @@ class VuePlayers extends Observer {
         }
 
 
-
         for (let j = 0; j < cartes[2].length; j++) {
             let divNorth = document.createElement("img");
             divNorth.src = "" + cartes[2][j].imagefond;
@@ -1087,8 +1314,9 @@ class VuePlayers extends Observer {
     }
 }
 
-class VueTabAffichage extends Observer{
+class VueTabAffichage extends Observer {
     #modele
+
     constructor(modele) {
         super();
         this.#modele = modele;
@@ -1096,13 +1324,16 @@ class VueTabAffichage extends Observer{
         this.#modele.ajouteObserver(this);
 
     }
+
     update() {
         this.#redessiner();
     }
-    #dessiner(){
+
+    #dessiner() {
 
     }
-    #redessiner(){
+
+    #redessiner() {
 
     }
 

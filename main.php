@@ -37,9 +37,9 @@ window.onload=function(){
 <body>
 <h1> Veuillez sélectionner votre niveau pour jouer </h1>
 <div id="chambres" style="width: 100%;height: 100px;text-align:center;" >
-<button type="button" id="Btn1" onclick="start(0, <?= $_GET["username"] ?> )">amateur 0/4</button>
-<button type="button" id="Btn2" onclick="start(1, <?= $_GET["username"] ?> )">moyen 0/4</button>
-<button type="button" id="Btn3" onclick="start(2, <?= $_GET["username"] ?> )">pro 0/4</button>
+<button type="button" id="Btn1" onclick="start(0, '<?php echo $_GET["username"] ?>' )">amateur 0/4</button>
+<button type="button" id="Btn2" onclick="start(1, '<?php  echo $_GET["username"] ?>' )">moyen 0/4</button>
+<button type="button" id="Btn3" onclick="start(2, '<?php echo $_GET["username"] ?>' )">pro 0/4</button>
 </div>
 
 </body>

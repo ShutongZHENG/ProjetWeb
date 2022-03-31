@@ -15,6 +15,7 @@
             position: absolute;
             left: 725px;
             top: 325px;
+            z-index: : 1;
 
         }
 
@@ -73,7 +74,7 @@
     <script type="text/javascript">
         window.onload = function () {
             $.ajax({
-                url: 'addUser.php?idRoom=' +<?php echo $_GET['idRoom'];?> +"&username=" +<?php echo $_GET['username'];?>,
+                url: 'addUser.php?idRoom=' +<?php echo $_GET['idRoom'];?> +"&username=" +'<?php echo $_GET['username'];?>',
                 type: "post",
                 async:false,
                 data: {},
@@ -82,7 +83,7 @@
                 }
 
             });
-            var modele = new CModele(<?php echo $_GET['idRoom'];?>,<?= $_GET["username"] ?>);
+            var modele = new CModele(<?php echo $_GET['idRoom'];?>,'<?= $_GET["username"] ?>');
             var vue = new CVue(modele);
             setInterval( ()=>{vue.notifier()},500);
             console.log("json add");
@@ -94,7 +95,7 @@
             console.log("exit");
 
             $.ajax({
-                url: 'deleUser.php?idRoom=' +<?php echo $_GET['idRoom'];?> +"&username=" +<?php echo $_GET['username'];?>,
+                url: 'deleUser.php?idRoom=' +<?php echo $_GET['idRoom'];?> +"&username=" +'<?php echo $_GET['username'];?>',
                 type: "post",
                 async:true,
                 data: {},
