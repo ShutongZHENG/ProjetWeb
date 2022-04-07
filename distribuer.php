@@ -12,6 +12,8 @@ switch ($idRoom) {
         for($i=0; $i<4;$i++){
             $datajson["chambre1"][$i]["gameStatus"] = $gameStatus;
             $datajson["chambre1"][$i]["cartes"] = $cartes[$i];
+            $datajson["chambre1"][$i]["outall"] = false;
+            $datajson["chambre1"][$i]["cartesCentre"] = [];
         }
         break;
     case 1:
@@ -19,6 +21,8 @@ switch ($idRoom) {
         for($i=0; $i<4;$i++){
             $datajson["chambre2"][$i]["gameStatus"] = $gameStatus;
             $datajson["chambre2"][$i]["cartes"] = $cartes[$i];
+            $datajson["chambre2"][$i]["outall"] = false;
+            $datajson["chambre2"][$i]["cartesCentre"] = [];
         }
         break;
     case 2:
@@ -26,6 +30,8 @@ switch ($idRoom) {
         for($i=0; $i<4;$i++){
             $datajson["chambre3"][$i]["gameStatus"] = $gameStatus;
             $datajson["chambre3"][$i]["cartes"] = $cartes[$i];
+            $datajson["chambre3"][$i]["outall"] = false;
+            $datajson["chambre3"][$i]["cartesCentre"] = [];
         }
         break;
 }

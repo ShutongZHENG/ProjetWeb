@@ -133,7 +133,10 @@
             <div id="west"></div>
             <div id="east"></div>
             <div id="south"></div>
-
+            <div id ="noteTable">
+                <div id = "webLeft"></div>
+                <div id = "webRight"></div>
+            </div>
         </div>
     </div>
 

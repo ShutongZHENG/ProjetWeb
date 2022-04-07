@@ -16,6 +16,8 @@ switch ($idRoom){
             $datajson["chambre1"][$i]["cartes"] = [];
             $datajson["chambre1"][$i]["order"] = "";
             $datajson["chambre1"][$i]["cartesCentre"] = [];
+            $datajson["chambre1"][$i]["note"] = 0;
+            $datajson["chambre1"][$i]["outall"] = false;
         }
 
         break;
@@ -30,6 +32,8 @@ switch ($idRoom){
             $datajson["chambre2"][$i]["cartes"] = [];
             $datajson["chambre2"][$i]["order"] = "";
             $datajson["chambre2"][$i]["cartesCentre"] = [];
+            $datajson["chambre2"][$i]["note"] = 0;
+            $datajson["chambre2"][$i]["outall"] = false;
         }
 
         break;
@@ -44,6 +48,8 @@ switch ($idRoom){
             $datajson["chambre3"][$i]["cartes"] = [];
             $datajson["chambre3"][$i]["order"] = "";
             $datajson["chambre3"][$i]["cartesCentre"] = [];
+            $datajson["chambre3"][$i]["note"] = 0;
+            $datajson["chambre3"][$i]["outall"] = false;
         }
         break;
 }

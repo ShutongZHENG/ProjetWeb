@@ -9,6 +9,8 @@ $data['gameStatus'] = 'false';
 $data['cartes'] = array();
 $data['order'] = 0;
 $data['cartesCentre'] = array();
+$data['note'] = 0;
+$data['outall'] = false;
 
 
 if (file_exists('room.json')) {

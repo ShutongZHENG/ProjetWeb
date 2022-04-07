@@ -389,8 +389,11 @@ class CModele extends Observable {
 
             }
 
+            this.gagner();
+            this.autorefreshPlayers();
 
         }
+
     }
 
     gagner() {
@@ -400,7 +403,22 @@ class CModele extends Observable {
         // 1。 当用户退出后 分数归0
         //2。 用户分别出完 得分是 10， 5，2，0
         // 10分当判断json 别的用户手里都有牌的情况下 为10 有一个人是空为5 有2个人是 2 场上3个人都无牌自动判别为空
-        return false;
+        let idroom = this.idRoom;
+        let username = this.username;
+        $.ajax({
+                url: 'gagner.php',
+                type: "get",
+                dataType: "text",
+                async: false,
+                data: {"idRoom": idroom, "username": username},
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
+                    console.log("fail");
+                }
+            }
+        );
     }
 
     envoyerMsg(msg) {
@@ -866,6 +884,7 @@ class VueCommandes {
         this.#bt_montrer.innerHTML = 'montrer';
         this.#bt_montrer.onclick = function () {
             modele.montrer();
+
         }
         // .addEventListener("click", this.#modele.montrer);
 
@@ -978,6 +997,7 @@ class VuePlayers extends Observer {
         let oldPlayers = this.#modele.getPlayers();
 
         this.#modele.autorefreshPlayers();
+        console.log("modele gameStatu: "+ this.#modele.gameStatus);
         this.#Players = this.#modele.getPlayers();
 
         let del1 = document.getElementById('south');
@@ -1316,12 +1336,17 @@ class VuePlayers extends Observer {
 
 class VueTabAffichage extends Observer {
     #modele
+    #tableWidth;
+    #tableHeight;
+    noteString;
+
 
     constructor(modele) {
         super();
         this.#modele = modele;
         this.#dessiner();
         this.#modele.ajouteObserver(this);
+        this.noteString = "";
 
     }
 
@@ -1331,11 +1356,107 @@ class VueTabAffichage extends Observer {
 
     #dessiner() {
 
+        var idTabLeft = document.getElementById("webLeft");
+        var idTabRight = document.getElementById("webRight");
+        idTabLeft.style.position = "absolute";
+        idTabLeft.style.left = "0px";
+        idTabLeft.style.top ="20px";
+        idTabLeft.style.zIndex ="2";
+        //1413 * 856
+        idTabLeft.style.width = "20px";
+         idTabLeft.style.height = "800px"
+        idTabRight.style.position ="absolute";
+        idTabRight.style.right ="0px";
+        idTabRight.style.width = "20px";
+        idTabRight.style.height = "800px";
+        idTabRight.style.top ="20px";
+        idTabRight.style.zIndex ="2";
+        // idTabLeft.style.backgroundColor = "red";
+        // idTabRight.style.backgroundColor = "red";
+
+
+        let idRoom = this.#modele.idRoom;
+        idTabLeft.onmouseover = function (event){
+            let res = "";
+            $.ajax({
+                url: "room.json",
+                type: "GET",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+
+                    switch (idRoom) {
+                        case 0:
+                            for (let value of data.chambre1) {
+                                res  = res+ value.name +"  note: "+value.note +"\n";
+                                console.log("name :"+value.name+"  note: "+value.note);
+
+                            }
+                            // console.log(chambres.chambre1.length );
+                            break;
+                        case 1:
+                            for (let value of data.chambre2) {
+                                res  = res+ value.name +"  note: "+value.note+"\n";
+                                console.log("name :"+value.name+"  note: "+value.note);
+                            }
+                            break;
+                        case 2:
+                            for (let value of data.chambre3) {
+                                res  = res+ value.name +"  note: "+value.note+"\n";
+                                console.log("name :"+value.name+"  note: "+value.note);
+                            }
+                            break;
+                    }
+                }
+            });
+            alert( res);
+        }
+        idTabRight.onmouseover = function (event){
+            let res = "";
+            $.ajax({
+                url: "room.json",
+                type: "GET",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+
+                    switch (idRoom) {
+                        case 0:
+                            for (let value of data.chambre1) {
+                                res  = res+ value.name +"  note: "+value.note +"\n";
+                                console.log("name :"+value.name+"  note: "+value.note);
+
+                            }
+                            // console.log(chambres.chambre1.length );
+                            break;
+                        case 1:
+                            for (let value of data.chambre2) {
+                                res  = res+ value.name +"  note: "+value.note+"\n";
+                                console.log("name :"+value.name+"  note: "+value.note);
+                            }
+                            break;
+                        case 2:
+                            for (let value of data.chambre3) {
+                                res  = res+ value.name +"  note: "+value.note+"\n";
+                                console.log("name :"+value.name+"  note: "+value.note);
+                            }
+                            break;
+                    }
+                }
+            });
+            alert( res);
+        }
+
+
+
+
     }
 
     #redessiner() {
 
     }
+
+
 
 }
 
@@ -1345,6 +1466,7 @@ class CVue {
     #VueCommandes
     #VueFond
     #VuePlayers
+    #VueTabAffichage
     #modele;
 
     constructor(modele) {
@@ -1353,6 +1475,7 @@ class CVue {
         this.#VuePlayers = new VuePlayers(modele);
         this.#modele = modele;
         this.#VueCommandes = new VueCommandes(modele);
+        this.#VueTabAffichage = new VueTabAffichage(modele);
         this.#modele.notifieObservers();
 
 
