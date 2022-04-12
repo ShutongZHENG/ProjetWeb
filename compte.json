@@ -18,5 +18,15 @@
     "username": "abc",
     "password": "",
     "niveau": "amateur"
+  },
+  {
+    "username": "admin",
+    "password": "admin",
+    "niveau": ""
+  },
+  {
+    "username": "shutong",
+    "password": "shutong",
+    "niveau": "moyen"
   }
 ]

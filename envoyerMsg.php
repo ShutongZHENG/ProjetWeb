@@ -2,8 +2,8 @@
 
 $msg = $_GET['message'];
 $idRoom = $_GET['idRoom'];
-
-
+$name  = $_GET['username'];
+$msg = $name ."> " .$msg;
 
 $datajson = array();
 $data = array();

@@ -424,12 +424,13 @@ class CModele extends Observable {
     envoyerMsg(msg) {
         console.log("start ajax");
         let idroom = this.idRoom;
+        let username = this.username;
         $.ajax({
                 url: 'envoyerMsg.php',
                 type: "get",
                 dataType: "text",
                 async: false,
-                data: {"message": msg, "idRoom": idroom},
+                data: {"message": msg, "idRoom": idroom,"username":username},
                 success: function (data) {
                     console.log(data);
                 },
@@ -816,7 +817,7 @@ class VueChatRoom extends Observer {
 
             let context;
             for (let i = 0; i < msg.length - this.#listMsg.length; i++) {
-                context = $("#textbox").append("> " + msg[this.#listMsg.length + i] + "\n");
+                context = $("#textbox").append(msg[this.#listMsg.length + i] + "\n");
             }
             this.#listMsg = msg;
             context.scrollTop(context[0].scrollHeight - context.height());
