@@ -71,13 +71,6 @@ class Carte {
 
 }
 
-
-/*
-interface Observer {
-    public function update();
-}
-*/
-
 class Observer {
     update() {
     }

@@ -11,6 +11,7 @@ $data['order'] = 0;
 $data['cartesCentre'] = array();
 $data['note'] = 0;
 $data['outall'] = false;
+$data['lastper'] = '';
 
 
 if (file_exists('room.json')) {

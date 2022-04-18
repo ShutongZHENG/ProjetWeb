@@ -115,6 +115,8 @@ class CModele extends Observable {
     username;
     order;
     centreCartes;
+    lastper
+    indexPos
 
 
     constructor(idRoom, username) {
@@ -132,6 +134,7 @@ class CModele extends Observable {
         console.log("hello " + this.idRoom);
         this.order = 0;
         this.centreCartes = new Array();
+        this.indexPos = 0;
 
     }
 
@@ -213,6 +216,7 @@ class CModele extends Observable {
 
         let centreCartes;
         let order;
+        let lastper
         $.ajax({
             url: "room.json",
             type: "GET",
@@ -224,21 +228,25 @@ class CModele extends Observable {
                     case 0:
                         order = data.chambre1[0]['order'];
                         centreCartes = data.chambre1[0]['cartesCentre'];
+                        lastper = data.chambre1[0]['lastper'];
                         // console.log(chambres.chambre1.length );
                         break;
                     case 1:
                         order = data.chambre2[0]['order'];
                         centreCartes = data.chambre2[0]['cartesCentre'];
+                        lastper = data.chambre2[0]['lastper'];
                         break;
                     case 2:
                         order = data.chambre3[0]['order'];
                         centreCartes = data.chambre3[0]['cartesCentre'];
+                        lastper = data.chambre3[0]['lastper'];
                         break;
                 }
             }
         });
         this.order = order;
         this.centreCartes = centreCartes;
+        this.lastper = lastper;
 
     }
 
@@ -289,15 +297,19 @@ class CModele extends Observable {
                     listMontrer.push(listSouth[i].alt);
                 }
             }
-            let data = encodeURI(JSON.stringify(listMontrer));
-            console.log("WHAT IS THE DATA:")
-            console.log(data);
+            if (listMontrer.length <=1){
 
-            let urllink = "idRoom=" + this.idRoom + "&listMontrer=" + data+"&username="+this.username;
-            $.get("montrer.php", urllink, function (data) {
-                console.log("THIS IS: ");
+                let data = encodeURI(JSON.stringify(listMontrer));
+                console.log("WHAT IS THE DATA:")
                 console.log(data);
-            });
+
+                let urllink = "idRoom=" + this.idRoom + "&listMontrer=" + data+"&username="+this.username;
+                $.get("montrer.php", urllink, function (data) {
+                    console.log("THIS IS: ");
+                    console.log(data);
+                });
+
+
 
 
 
@@ -333,7 +345,19 @@ class CModele extends Observable {
             } else {
                 this.order = this.order + 1;
             }
-            switch (this.order) {
+
+
+
+
+
+
+
+
+
+
+
+
+                switch (this.order) {
                 case listPosition[0]:
                     //南部 增加一个标志
                     indexMark = document.createElement("img");
@@ -393,7 +417,7 @@ class CModele extends Observable {
             this.autorefreshPlayers();
 
         }
-
+        }
     }
 
     gagner() {
@@ -903,6 +927,7 @@ class VuePlayers extends Observer {
     #modele;
     #imageProfile;
     #order;
+     indexPos;
 
     constructor(modele) {
         super();
@@ -912,6 +937,7 @@ class VuePlayers extends Observer {
         this.#dessiner();
         this.#modele.ajouteObserver(this);
         this.#order  =0;
+        this.indexPos = 0;
 
     }
 
@@ -955,7 +981,34 @@ class VuePlayers extends Observer {
         imageProfile2.style.height = "50%";
         idImageProfile2.appendChild(imageProfile2);
 
+        //
+        // var playerNameSouth = document.createElement('h3');
+        // playerNameSouth.id = "playerNameSouth";
+        // var nameSouth = document.createTextNode(this.#modele.username);
+        // playerNameSouth.appendChild(nameSouth);
+        // playerNameSouth.style.zIndex ="10";
+        // playerNameSouth.style.top = "0";
+        // playerNameSouth.style.position ="absolute";
+        // playerNameSouth.style.left = "680px";
+        // idImageProfile2.appendChild(playerNameSouth);
+
+
+
         if (nbPer > 1) {
+            // let players =  this.#modele.getPlayers();
+            // let indexSud = 0;
+            // let indexWest ;
+            // for (let i = 0; i < players.length; i++) {
+            //         if (players[i].name == this.#modele.username)
+            //             indexSud = i;
+            // }
+            //
+            // if (indexSud==players.length-1){
+            //     indexWest = 0;
+            // }else {
+            //     indexWest = indexSud+1;
+            //     console.log(indexSud+" west "+indexWest);
+            // }
 
             var imageProfile3 = document.createElement("img");
             imageProfile3.src = this.#imageProfile;
@@ -964,9 +1017,24 @@ class VuePlayers extends Observer {
             imageProfile3.style.width = "50%";
             idImageProfile3.appendChild(imageProfile3);
 
+            // var playerNameWest = document.createElement('h3');
+            // playerNameWest.id = "playerNameWest";
+            // var nameWest = document.createTextNode(players[indexWest].name);
+            // playerNameWest.appendChild(nameWest);
+            // playerNameWest.style.zIndex ="10";
+            // playerNameWest.style.top = "460px";
+            // playerNameWest.style.position ="absolute";
+            // playerNameWest.style.left = "65px";
+            // idImageProfile3.appendChild(playerNameWest);
 
             if (nbPer > 2) {
-
+                // let indexNorth;
+                // if (indexWest==players.length-1){
+                //     indexNorth = 0;
+                // }else {
+                //     indexNorth = indexWest+1;
+                //
+                // }
                 var imageProfile = document.createElement("img");
                 imageProfile.src = this.#imageProfile;
                 imageProfile.id = "profile_north";
@@ -975,7 +1043,27 @@ class VuePlayers extends Observer {
                 idImageProfile.appendChild(imageProfile);
                 console.log("TIME2 " + this.#Players.length);
 
+                // var playerNameNorth = document.createElement('h3');
+                // playerNameNorth.id ="playerNameNorth";
+                // var nameNorth = document.createTextNode(players[indexNorth].name);
+                // playerNameNorth.appendChild(nameNorth);
+                // playerNameNorth.style.zIndex ="10";
+                // playerNameNorth.style.top = "90px";
+                // playerNameNorth.style.position ="absolute";
+                // playerNameNorth.style.left = "790px";
+                // idImageProfile.appendChild(playerNameNorth);
+
+
+
                 if (nbPer > 3) {
+
+                    // let indexEast;
+                    // if (indexNorth==players.length-1){
+                    //     indexEast = 0;
+                    // }else {
+                    //     indexEast = indexNorth+1;
+                    //
+                    // }
 
                     var imageProfile4 = document.createElement("img");
                     imageProfile4.src = this.#imageProfile;
@@ -983,6 +1071,19 @@ class VuePlayers extends Observer {
                     var idImageProfile4 = document.getElementById('east');
                     imageProfile4.style.width = "50%";
                     idImageProfile4.appendChild(imageProfile4);
+
+                    // var playerNameEast = document.createElement('h3');
+                    // playerNameEast.id = "playerNameEast";
+                    // var nameEast = document.createTextNode(players[indexEast].name);
+                    // playerNameEast.appendChild(nameEast);
+                    // playerNameEast.style.zIndex ="10";
+                    // playerNameEast.style.top = "460px";
+                    // playerNameEast.style.position ="absolute";
+                    // playerNameEast.style.right = "65px";
+                    //
+                    // idImageProfile4.appendChild(playerNameEast);
+
+
 
                 }
             }
@@ -998,7 +1099,7 @@ class VuePlayers extends Observer {
         let oldPlayers = this.#modele.getPlayers();
 
         this.#modele.autorefreshPlayers();
-        console.log("modele gameStatu: "+ this.#modele.gameStatus);
+      //  console.log("modele gameStatu: "+ this.#modele.gameStatus);
         this.#Players = this.#modele.getPlayers();
 
         let del1 = document.getElementById('south');
@@ -1038,10 +1139,12 @@ class VuePlayers extends Observer {
                 }
                 if (document.getElementById('profile_west') && val > 0) {
                     document.getElementById('profile_west').remove();
+
                 }
 
             } else {
                 let val = this.#Players.length - oldPlayers.length;
+
                 if (val > 0 && document.getElementById('profile_west') === null) {
                     let imageProfile = document.createElement("img");
                     imageProfile.src = this.#imageProfile;
@@ -1050,8 +1153,14 @@ class VuePlayers extends Observer {
                     imageProfile.style.width = "50%";
                     idImageProfile.appendChild(imageProfile);
                     val = val - 1;
+
+
                 }
                 if (val > 0 && document.getElementById('profile_north') === null) {
+
+
+
+
                     let imageProfile = document.createElement("img");
                     imageProfile.src = this.#imageProfile;
                     imageProfile.id = "profile_north";
@@ -1059,8 +1168,13 @@ class VuePlayers extends Observer {
                     imageProfile.style.height = "50%";
                     idImageProfile.appendChild(imageProfile);
                     val = val - 1;
+
+
+
                 }
                 if (document.getElementById('profile_east') === null && val > 0) {
+
+
                     let imageProfile = document.createElement("img");
                     imageProfile.src = this.#imageProfile;
                     imageProfile.id = "profile_east";
@@ -1208,6 +1322,9 @@ class VuePlayers extends Observer {
         }
 //
         let indexMark;
+
+
+
         switch (this.#modele.order) {
             case listPosition[0]:
                 //南部 增加一个标志
@@ -1266,6 +1383,18 @@ class VuePlayers extends Observer {
         }
 
 
+        var idImageProfile2 = document.getElementById('south');
+        var playerNameSouth = document.createElement('h3');
+        playerNameSouth.id = "playerNameSouth";
+        var nameSouth = document.createTextNode(this.#modele.username);
+        playerNameSouth.appendChild(nameSouth);
+        playerNameSouth.style.zIndex ="10";
+        playerNameSouth.style.top = "-50px";
+        playerNameSouth.style.position ="absolute";
+        playerNameSouth.style.left = "680px";
+        idImageProfile2.appendChild(playerNameSouth);
+
+
         for (let i = 0; i < cartes[0].length; i++) {
 
 
@@ -1290,8 +1419,24 @@ class VuePlayers extends Observer {
 
         }
 
-
+        let players = this.#modele.getPlayers();
         //西面
+        var idImageProfile3 = document.getElementById('west');
+        var playerNameWest = document.createElement('h3');
+        playerNameWest.id = "playerNameWest";
+        var nameWest = document.createTextNode(players[listPosition[1]].name);
+        playerNameWest.appendChild(nameWest);
+        playerNameWest.style.zIndex ="10";
+        playerNameWest.style.top = "350px";
+        playerNameWest.style.position ="absolute";
+        playerNameWest.style.left = "150px";
+        idImageProfile3.appendChild(playerNameWest);
+
+
+
+
+
+
 
         for (let j = 0; j < cartes[1].length; j++) {
             let divWest = document.createElement("img");
@@ -1306,6 +1451,20 @@ class VuePlayers extends Observer {
         }
 
 
+        var idImageProfile = document.getElementById('north');
+        var playerNameNorth = document.createElement('h3');
+        playerNameNorth.id ="playerNameNorth";
+        var nameNorth = document.createTextNode(players[listPosition[2]].name);
+        playerNameNorth.appendChild(nameNorth);
+        playerNameNorth.style.zIndex ="10";
+        playerNameNorth.style.top = "150px";
+        playerNameNorth.style.position ="absolute";
+        playerNameNorth.style.left = "700px";
+        idImageProfile.appendChild(playerNameNorth);
+
+
+
+
         for (let j = 0; j < cartes[2].length; j++) {
             let divNorth = document.createElement("img");
             divNorth.src = "" + cartes[2][j].imagefond;
@@ -1317,6 +1476,20 @@ class VuePlayers extends Observer {
             idNorth.appendChild(divNorth);
 
         }
+
+
+        var idImageProfile4 = document.getElementById('east');
+        var playerNameEast = document.createElement('h3');
+        playerNameEast.id = "playerNameEast";
+        var nameEast = document.createTextNode(players[listPosition[3]].name);
+        playerNameEast.appendChild(nameEast);
+        playerNameEast.style.zIndex ="10";
+        playerNameEast.style.top = "350px";
+        playerNameEast.style.position ="absolute";
+        playerNameEast.style.right = "150px";
+
+        idImageProfile4.appendChild(playerNameEast);
+
 
 
         for (let j = 0; j < cartes[3].length; j++) {
