@@ -1,1 +1,57 @@
-[{"username":"123","password":"123","niveau":"amateur"},{"username":"1","password":"1","niveau":"amateur"},{"username":"12","password":"12","niveau":"moyen"},{"username":"abc","password":"","niveau":"amateur"},{"username":"admin","password":"admin","niveau":""},{"username":"shutong","password":"shutong","niveau":"moyen"},{"username":"1","password":"1","niveau":"amateur"},{"username":"2","password":"2","niveau":"amateur"},{"username":"3","password":"3","niveau":"amateur"},{"username":"4","password":"4","niveau":"moyen"}]
+[
+  {
+    "username": "123",
+    "password": "123",
+    "niveau": "amateur"
+  },
+  {
+    "username": "1",
+    "password": "1",
+    "niveau": "amateur"
+  },
+  {
+    "username": "12",
+    "password": "12",
+    "niveau": "moyen"
+  },
+  {
+    "username": "abc",
+    "password": "",
+    "niveau": "amateur"
+  },
+  {
+    "username": "admin",
+    "password": "admin",
+    "niveau": ""
+  },
+  {
+    "username": "shutong",
+    "password": "shutong",
+    "niveau": "moyen"
+  },
+  {
+    "username": "1",
+    "password": "1",
+    "niveau": "amateur"
+  },
+  {
+    "username": "2",
+    "password": "2",
+    "niveau": "amateur"
+  },
+  {
+    "username": "3",
+    "password": "3",
+    "niveau": "amateur"
+  },
+  {
+    "username": "4",
+    "password": "4",
+    "niveau": "moyen"
+  },
+  {
+    "username": "fred",
+    "password": "123",
+    "niveau": "pro"
+  }
+]

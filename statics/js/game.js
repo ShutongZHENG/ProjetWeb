@@ -723,10 +723,31 @@ class VueFond extends Observer {
         imageCentreFond.style.position = "absolute";
         imageCentreFond.style.zIndex = "2";
 
+        var textarea = document.createElement("textarea");
+        textarea.style.zIndex = "2";
+        textarea.style.position = "absolute";
+        textarea.style.left = "280px";
+        textarea.style.top =" 325px;"
+        textarea.style.width = "250px";
+        textarea.cols = 30;
+        textarea.rows = 10;
+        textarea.readOnly = true;
+        textarea.name = "rulebox";
+        textarea.style.overflow = "auto";
+        textarea.style.resize = "none";
+        textarea.style.userSelect ="none";
+        textarea.value="Jouez aux cartes à tour de rôle, chaque joueur ne peut jouer qu'une seule carte à la fois. Les cartes jouées doivent être plus grand que celles sur la table.\n" +
+            "Lorsqu'un joueur n'a aucune carte en main, il gagne. \n1er: +5 points 2eme:+3 points 3eme: +1 points";
+
+
+
+
+
 
         var idImageCentreFond = document.getElementById('imageCentreFond');
 
         idImageCentreFond.appendChild(imageCentreFond);
+        idImageCentreFond.appendChild(textarea);
 
 
     }

@@ -39,7 +39,6 @@ function start(idChambre,name)
                     case 0:
                         if (libreChambres.chambre1.length <4)
                             isEntrer = true;
-                       // console.log(chambres.chambre1.length );
                         break;
                     case 1:
                         if (libreChambres.chambre2.length <4)
